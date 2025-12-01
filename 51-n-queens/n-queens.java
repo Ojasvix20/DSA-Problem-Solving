@@ -1,56 +1,59 @@
 class Solution {
-    static char[][] board;
+    static int[] x;                   // x[k] = column of queen in row k
     static List<List<String>> result;
 
     public List<List<String>> solveNQueens(int n) {
-        board = new char[n][n];
+        x = new int[n];
         result = new ArrayList<>();
 
-        // Fill board array with dots
-        for (int i = 0; i < n; i++) {
-            Arrays.fill(board[i], '.');
-        }
-
-        solve(0, n);
+        place(0, n);
         return result;
     }
 
-    private static boolean isSafe(int row, int col, int n) {
-        for (int i = 0; i < row; i++) {
-            if (board[i][col]=='Q')
-                return false;
+    private static void place(int k, int n) {
+        if (k == n) {
+            addBoard(n);
+            return;
         }
-        for (int i = row - 1, j=col-1; i>=0 && j>=0; i--, j--) {
-            if (board[i][j]=='Q')
-                return false;
+
+        for (int col = 0; col < n; col++) {
+            if (isSafe(k, col)) {
+                x[k] = col;           // place queen mathematically
+                place(k + 1, n);
+            }
         }
-        for (int i = row - 1, j=col+1 ; i >=0 && j<n; i--, j++) {
-            if (board[i][j]=='Q')
+    }
+
+    private static boolean isSafe(int k, int col) {
+        for (int j = 0; j < k; j++) {
+
+            // Same column check
+            if (x[j] == col) return false;
+
+            // Diagonal check using |x[j] - col| == |j - k|
+            if (Math.abs(x[j] - col) == Math.abs(j - k))
                 return false;
         }
         return true;
     }
 
-    private static void solve(int row, int n) {
-        if (row == n) {
-            addBoard(n);
-            return;
-        }
-        for (int col = 0; col < n; col++) {
-            if (isSafe(row,col,n)) {
-                board[row][col] = 'Q';
-                solve(row + 1, n);
-                board[row][col] = '.';
-            }
-        }
-    }
     private static void addBoard(int n) {
         List<String> temp = new ArrayList<>();
+
         for (int i = 0; i < n; i++) {
-            temp.add(new String(board[i]));
+            char[] row = new char[n];
+            Arrays.fill(row, '.');
+            row[x[i]] = 'Q';
+            temp.add(new String(row));
         }
+
         result.add(temp);
     }
 }
 
 // Solve with The formula 
+// Place(k,i){
+//     for(j=1 to n){
+//         (x[j-1])=(j-k)
+//     }
+// }
