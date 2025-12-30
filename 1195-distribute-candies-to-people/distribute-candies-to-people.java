@@ -1,9 +1,16 @@
 class Solution {
-        public int[] distributeCandies(int candies, int num_people) {
-        int[] people = new int[num_people];
-        for (int give = 0; candies > 0; candies -= give) {
-            people[give % num_people] +=  Math.min(candies, ++give);
+    public int[] distributeCandies(int candies, int n) {
+        int[] res = new int[n];
+        int give = 1, i = 0;
+
+        while (candies > 0) {
+            if (give > candies) give = candies;
+            res[i] += give;
+            candies -= give;
+            give++;
+            if (++i == n) i = 0;
         }
-        return people;
+
+        return res;
     }
 }
