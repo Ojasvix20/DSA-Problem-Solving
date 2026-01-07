@@ -1,32 +1,52 @@
-class Solution {
-    static int solveTab(int[] prices,int k){
-        int n=prices.length;
+class Solution{
+        public int maxProfit( int k , int[] prices) {
+            int n= prices.length;
+            int[][][] dp=  new int[n+1][2][k+1];
 
-        int [][] curr = new int[2][k+2];
-        int [][] next = new int[2][k+2];
+            for(int i=n-1;i>=0;i--){
+                for(int buy=0; buy<=1; buy++){
+                    for(int cap=1; cap<=k; cap++){
 
-        for(int index=n-1;index>=0;index--){
-            for(int buy=1;buy>=0;buy--){
-                for(int limit=1;limit<=k;limit++){
-                    int profit=0;
-                    if(buy==1){
-                        int salekaro=prices[index]+next[0][limit-1];
-                        int skipkaro=0+next[1][limit];
-                        profit+=Math.max(salekaro,skipkaro);
+                        if(buy==1){
+                            dp[i][buy][cap] =  Math.max((-prices[i] + dp[i+1][0][cap]), (0 + dp[i+1][1][cap]));
+                        }else{
+                            dp[i][buy][cap] =  Math.max((prices[i] + dp[i+1][1][cap-1]), ( dp[i+1][0][cap]));
+                        }
                     }
-                    else{
-                        int buykaro=-prices[index]+next[1][limit];
-                        int skipkaro=0+next[0][limit];
-                        profit+=Math.max(buykaro,skipkaro);
-                    }
-                    curr[buy][limit]=profit;
                 }
             }
-            next=curr;
+            return dp[0][1][k];
+
         }
-        return next[0][k];
+
     }
-    public int maxProfit(int k, int[] prices) {
-        return solveTab(prices,k);
-    }
-}
+    // class Solution {
+//     static int n;
+//     static int[][][] dp;
+
+//     public int maxProfit(int k, int[] prices) {
+//         n = prices.length;
+//         dp = new int[n][2][k+1];
+//         for (int i = 0; i < n; i++)
+//             for (int buy = 0; buy < 2; buy++)
+//                 Arrays.fill(dp[i][buy], -1);
+//         return solve(0, k, 1, prices);
+//     }
+
+//     // TOP DOWN:
+//     public int solve(int i, int cap, int buy, int[] prices) {
+//         if (cap == 0)
+//             return 0;
+//         if (i == n)
+//             return 0;
+
+//         if(dp[i][buy][cap]!=-1) return dp[i][buy][cap];
+
+//         if (buy==1) {
+//             return dp[i][buy][cap] =  Math.max((-prices[i] + solve(i + 1, cap, 0, prices)), (0 + solve(i + 1, cap, 1, prices)));
+//         }else{
+//             return dp[i][buy][cap] = Math.max((prices[i] + solve(i + 1, cap-1, 1, prices)), (0 + solve(i + 1, cap, 0, prices)));
+
+//         }
+//     }
+// }
