@@ -1,10 +1,10 @@
 class Solution {
-    static int[][] dp;
+    // static int[][] dp;
     static int n;
 
     public int lengthOfLIS(int[] nums) {
         n = nums.length;
-        dp = new int[n + 1][n + 1];
+        // dp = new int[n + 1][n + 1];
 
         // for (int[] row : dp) {
         //     Arrays.fill(row, -1);
@@ -37,18 +37,20 @@ class Solution {
 
     // BOTTOM UP
     private static int solve(int[] nums) {
-        int dp[] = new int[n];
-        Arrays.fill(dp, 1);
+        int dp[][] = new int[n+1][n+1];
+        // for (int[] row : dp)
+        //     Arrays.fill(row, 1);
 
-        int ans = 1;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                if (nums[j] < nums[i]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
+        for (int i = n-1; i >=0; i--) {
+            for (int prev = i-1; prev >=-1 ; prev--) {
+                int notTake = dp[i+1][prev+1];
+                int take =0;
+                if (prev==-1 || nums[prev] < nums[i]) {
+                    take= 1 + dp[i+1][i+1];
                 }
-                ans = Math.max(ans, dp[i]);
+                dp[i][prev+1 ] = Math.max(take, notTake);
             }
         }
-        return ans;
+        return dp[0][0];
     }
 }
