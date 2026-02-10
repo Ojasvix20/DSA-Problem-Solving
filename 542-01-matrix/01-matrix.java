@@ -5,44 +5,56 @@ class Solution {
     static int m, n;
 
     public int[][] updateMatrix(int[][] mat) {
-        m = mat.length;
-        n = mat[0].length;
+        n = mat.length;
+        m = mat[0].length;
 
-        int[][] ans = new int[m][n];
-        boolean[][] vis = new boolean[m][n];
+        int[][] ans = new int[n][m];
+        for(int[] row: ans){
+            Arrays.fill(row,-1);
+        }
         Queue<int[]> q = new LinkedList<>();
 
-        // Step 1: Push all 0s into queue
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (mat[i][j] == 0) {
-                    q.add(new int[]{i, j});
-                    vis[i][j] = true;
+        //offer 0s into the q first...
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(mat[i][j]==0){
+                    q.offer(new int[]{i,j});
+                    ans[i][j]=0;
                 }
             }
         }
 
-        int[] dr = {-1, 0, 1, 0};
-        int[] dc = {0, 1, 0, -1};
+        //simple BFS traversal:
 
-        // Step 2: BFS
-        while (!q.isEmpty()) {
-            int[] curr = q.poll();
-            int r = curr[0];
-            int c = curr[1];
+        while(!q.isEmpty()){
+            int[] curr= q.poll();
+            int x = curr[0];
+            int y = curr[1];
 
-            for (int d = 0; d < 4; d++) {
-                int nr = r + dr[d];
-                int nc = c + dc[d];
-
-                if (nr >= 0 && nc >= 0 && nr < m && nc < n && !vis[nr][nc]) {
-                    ans[nr][nc] = ans[r][c] + 1;
-                    vis[nr][nc] = true;
-                    q.add(new int[]{nr, nc});
-                }
+            //check all nbrs for visited and validity... then add to q.
+            if(checkValid(x+1,y) && ans[x+1][y]==-1){
+                q.offer(new int[]{x+1,y});
+                ans[x+1][y]=ans[x][y]+1;
+            }
+            if(checkValid(x-1,y) && ans[x-1][y]==-1){
+                q.offer(new int[]{x-1,y});
+                ans[x-1][y]=ans[x][y]+1;
+            }
+            if(checkValid(x,y+1) && ans[x][y+1]==-1){
+                q.offer(new int[]{x,y+1});
+                ans[x][y+1]=ans[x][y]+1;
+            }
+            if(checkValid(x,y-1) && ans[x][y-1]==-1){
+                q.offer(new int[]{x,y-1});
+                ans[x][y-1]=ans[x][y]+1;
+                
             }
         }
-
         return ans;
+    }
+    public static boolean checkValid(int x, int y){
+        if(x<0 || y<0 ||x>=n || y>=m) return false;
+    
+        return true;
     }
 }
