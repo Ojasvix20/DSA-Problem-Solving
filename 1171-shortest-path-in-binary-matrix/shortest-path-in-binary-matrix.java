@@ -1,51 +1,51 @@
-class Pair {
-    int row, col;
-
-    Pair(int r, int c) {
-        this.row = r;
-        this.col = c;
-    }
-}
+import java.util.*;
 
 class Solution {
-    static int[] dirX = { 0, 1, 1, -1, 1, -1, -1, 0 };
-    static int[] dirY = { 1, 0, 1, -1, -1, 1, 0, -1 };
-
     public int shortestPathBinaryMatrix(int[][] grid) {
         int n = grid.length;
-        int m = grid[0].length;
-        if (grid[0][0] == 1)
-            return -1;
-        Queue<Pair> q = new LinkedList<>();
-        q.offer(new Pair(0, 0));
-        int ans = 1;
-        boolean[][] vis = new boolean[n][m];
-        vis[0][0] = true;
 
-        while (!q.isEmpty()) {
+        // ❌ blocked start or end
+        if(grid[0][0] == 1 || grid[n-1][n-1] == 1) return -1;
+
+        // 8 directions
+        int[][] dir = {
+            {0,1},{1,0},{0,-1},{-1,0},
+            {1,1},{1,-1},{-1,1},{-1,-1}
+        };
+
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{0,0});
+
+        // mark visited
+        grid[0][0] = 1;
+
+        int dist = 1;
+
+        while(!q.isEmpty()){
             int size = q.size();
-            for (int i = 0; i < size; i++) {
 
-                Pair curr = q.poll();
-                int r = curr.row;
-                int c = curr.col;
+            for(int i=0;i<size;i++){
+                int[] curr = q.poll();
+                int r = curr[0];
+                int c = curr[1];
 
-                if (r == n - 1 && c == m - 1)
-                    return ans;
-                for (int d = 0; d < 8; d++) {
-                    int nr = r + dirX[d];
-                    int nc = c + dirY[d];
-                    if (nr >= 0 && nc >= 0 && nc < m && nr < n) {
-                        if (grid[nr][nc] == 0 && !vis[nr][nc]) {
-                            q.offer(new Pair(nr, nc));
-                            vis[nr][nc] = true;
-                        }
+                // ✅ reached destination
+                if(r == n-1 && c == n-1) return dist;
+
+                for(int[] d : dir){
+                    int nr = r + d[0];
+                    int nc = c + d[1];
+
+                    if(nr>=0 && nr<n && nc>=0 && nc<n && grid[nr][nc]==0){
+                        q.offer(new int[]{nr,nc});
+                        grid[nr][nc] = 1; // mark visited
                     }
                 }
             }
-                ans++;
 
+            dist++; // move to next level
         }
+
         return -1;
     }
 }
