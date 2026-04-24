@@ -1,52 +1,44 @@
-import java.util.*;
-
 class Solution {
     static int n, m;
-
-    static int[] dr = {1, -1, 0, 0};
-    static int[] dc = {0, 0, 1, -1};
+    static int[][] dir = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
 
     public int[][] updateMatrix(int[][] mat) {
         n = mat.length;
         m = mat[0].length;
-
         int[][] ans = new int[n][m];
         for (int[] row : ans) {
             Arrays.fill(row, -1);
         }
 
-        Queue<int[]> q = new LinkedList<>();
-
+        Queue<int[]> q = new ArrayDeque<>();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 if (mat[i][j] == 0) {
+                    q.offer(new int[] { i, j });
                     ans[i][j] = 0;
-                    q.offer(new int[]{i, j});
                 }
             }
         }
 
-        // BFS
-        while (!q.isEmpty()) {
+        while(!q.isEmpty()){
             int[] curr = q.poll();
-            int r = curr[0];
-            int c = curr[1];
+            int r=curr[0];
+            int c= curr[1];
 
-            for (int d = 0; d < 4; d++) {
-                int nr = r + dr[d];
-                int nc = c + dc[d];
+            for(int[] d: dir){
+                int nr= r+d[0];
+                int nc= c+d[1];
 
-                if (isValid(nr, nc) && ans[nr][nc] == -1) {
-                    ans[nr][nc] = ans[r][c] + 1;
-                    q.offer(new int[]{nr, nc});
+                if(isValid(nr,nc) && ans[nr][nc]==-1){
+                    ans[nr][nc]= ans[r][c]+1;
+                    q.offer(new int[]{nr,nc});
                 }
             }
         }
-
         return ans;
+        
     }
-
-    public static boolean isValid(int r, int c) {
-        return r >= 0 && c >= 0 && r < n && c < m;
+    boolean isValid(int nr, int nc){
+        return (nr>=0 && nr<n && nc>=0 && nc<m);
     }
 }
